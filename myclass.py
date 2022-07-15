@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Storage(ABC):
@@ -18,8 +18,24 @@ class Storage(ABC):
     def capacity(self):
         return self._capacity
 
+    def get_items(self):
+        """Возвращает кол-во айтемов и их кол-ва в storage."""
+        return self.items
+
+    def get_free_space(self):
+        """Возвращает кол-во свободного места в storage."""
+        stored = 0
+        for count in self.items.values():
+            stored += count
+        return int(self.capacity - stored)
+
+    def get_unique_items_count(self):
+        """Возвращает кол-во уникальных товаров."""
+        items = {item: count for (item, count) in self.items.items()}
+        return items
+
     def add(self, item, count):
-        """Добавляет кол-во айтемов к кол-ву айтемов класса."""
+        """Добавляет items к items в классе."""
         if item in self.items:
             self._items[item] += count
         else:
@@ -32,29 +48,16 @@ class Storage(ABC):
         else:
             raise Exception('Storage does not have such item.')
 
-    def get_free_space(self):
-        """Возвращает кол-во свободного места в storage."""
-        free_space = 0
-        for count in self.items.values():
-            free_space += count
-        return free_space
-
-    def get_items(self):
-        """Возвращает кол-во айтемов и их кол-ва в storage."""
-        return self.items
-
-    def get_unique_items_count(self):
-        """Возвращает кол-во уникальных товаров."""
-        items = [item for item in self.items.keys()]
-        return items
-
 
 class Store(Storage):
     """Класс Склад."""
-    def __init__(self, items, capacity=100):
-        super().__init__(items, capacity)
+    def __init__(self, items, capacity):
+        super().__init__(items, capacity=100)
         self._items = items
         self._capacity = capacity
+
+    def __repr__(self):
+        return f'store'
 
     def add(self, item, count):
         """Добавляет item в storage при наличии свободного места."""
@@ -78,28 +81,38 @@ class Store(Storage):
 
 class Shop(Storage):
     """Класс Магазин."""
-    def __init__(self, items, capacity=20):
-        super().__init__(items, capacity)
+    def __init__(self, items, capacity):
+        super().__init__(items, capacity=20)
         self._items = items
         self._capacity = capacity
+
+    def __repr__(self):
+        return f'shop'
 
     def add(self, item, count):
         """Добавляет item в storage при наличии свободного места."""
         free_space = self.get_free_space()
-        if not free_space >= free_space + count:
+        if not free_space >= count:
             raise Exception('There is no free space in the shop.')
-        if item not in self.items.keys(): # доделать проверку уникальности item
-            if len(self.get_unique_items_count()) + 1 <= 5:
-                if item in self.items:
-                    self._items[item] += count
-                else:
-                    self._items[item] = count
-            else:
-                raise Exception('Shop can contain only 5 unique items.')
+        if item not in self.items.keys():
+            if not len(self.get_unique_items_count()) + 1 <= 5:
+                raise Exception('The shop can contain only 5 unique items.')
+
+            self._items[item] = count
+
+        self._items[item] += count
 
 
-shop = Shop({'apples': 2, 'bananas': 3, 'pineapples': 2, 'plums': 5, 'tea': 4})
-print(shop.items)
-shop.add('apples', 1)
+class Request:
+    """Класс Запрос."""
+    _from: str
+    _to: str
+    _amount: int
+    _product: str
 
-
+    def __init__(self, storage_list: list, request: str):
+        self.parsed_request = request.split()
+        self._from = self.parsed_request[4]
+        self._to = self.parsed_request[6]
+        self._amount = int(self.parsed_request[1])
+        self._product = self.parsed_request[2]
