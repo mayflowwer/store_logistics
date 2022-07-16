@@ -1,3 +1,6 @@
+from constants import ACTIONS
+
+
 def invitation():
     """Стартовое приглашение."""
     return f'Welcome!'
@@ -41,6 +44,6 @@ def check_storage(
     return True
 
 
-def courier_info():
+def courier_info(action):
     """Уведомляет о статусе перемещения товара."""
-    pass
+    return ACTIONS[action]
