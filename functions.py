@@ -8,10 +8,11 @@ def invitation():
 
 def handle_request():
     """
-    Обработка запроса.
-    Возвращает строку с запросом.
+    Получает строку с запросом трансфера..
+    Возвращает параметры: количество, наименование,
+    место отправки, метро прибытия.
     """
-    request = input('What kind of product do you want to transfer?')
+    request = input('What kind of product do you want to transfer? ')
     parsed_request = request.split()
     count = int(parsed_request[1])
     item = parsed_request[2]
