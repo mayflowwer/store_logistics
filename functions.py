@@ -33,10 +33,8 @@ def check_storage(
     Возвращает True, если операция возможна.
     """
     if item not in store.items:
-        print('первое улсловие не отработало')
         return False
     if int(count) > int(store.items[item]):
-        print('второе условие не отработало')
         return False
     if not shop.get_free_space() >= int(count):
         return False
